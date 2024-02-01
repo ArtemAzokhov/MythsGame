@@ -10,4 +10,7 @@ UCLASS()
 class MYTH_API AMTGameModeBase : public AGameModeBase
 {
     GENERATED_BODY()
+
+public:
+    AMTGameModeBase();
 };
