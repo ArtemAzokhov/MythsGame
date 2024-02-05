@@ -37,6 +37,9 @@ protected:
     UInputAction* InputLook;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enhanced Input")
+    UInputAction* InputJump;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enhanced Input")
     bool IsNegatePitch = false;
 
     virtual void BeginPlay() override;

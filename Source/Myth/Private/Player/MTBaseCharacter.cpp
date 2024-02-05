@@ -50,6 +50,8 @@ void AMTBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
     Input->BindAction(InputMove, ETriggerEvent::Triggered, this, &AMTBaseCharacter::Move);
     Input->BindAction(InputLook, ETriggerEvent::Triggered, this, &AMTBaseCharacter::Look);
+    Input->BindAction(InputJump, ETriggerEvent::Started, this, &ACharacter::Jump);
+    Input->BindAction(InputJump, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 }
 
 void AMTBaseCharacter::Move(const FInputActionValue& Value)
