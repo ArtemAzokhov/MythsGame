@@ -21,7 +21,8 @@ public class Myth : ModuleRules
 
         PublicIncludePaths.AddRange(new string[] 
         {
-            "Myth/Public/Player"
+            "Myth/Public/Player",
+            "Myth/Public/Dev"
         });
 
         // Uncomment if you are using Slate UI

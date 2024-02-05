@@ -3,9 +3,13 @@
 #include "Player/MTBaseCharacter.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Components/MTHealthComponent.h"
 #include "InputMappingContext.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+
+DEFINE_LOG_CATEGORY_STATIC(BaseCharacterLog, All, All);
 
 AMTBaseCharacter::AMTBaseCharacter()
 {
@@ -20,11 +24,20 @@ AMTBaseCharacter::AMTBaseCharacter()
     CameraComponent = CreateDefaultSubobject<UCameraComponent>("CameraComponent");
     CameraComponent->FieldOfView = 45.0f;
     CameraComponent->SetupAttachment(SpringArmComponent);
+
+    HealthComponent = CreateDefaultSubobject<UMTHealthComponent>("HealthComponent");
 }
 
 void AMTBaseCharacter::BeginPlay()
 {
     Super::BeginPlay();
+
+    OnHealthChanged(HealthComponent->GetHealth()); // to set health value before the AMTBaseCharacter is constracted
+    HealthComponent->OnDeath.AddUObject(this, &AMTBaseCharacter::OnDeath);
+    HealthComponent->OnHealthChange.AddUObject(this, &AMTBaseCharacter::OnHealthChanged);
+
+    LandedDelegate.AddDynamic(this, &AMTBaseCharacter::OnGroundLanded);
+    LandedDamage = FVector2D(LandedDamage.X, HealthComponent->GetMaxHealth()); // to kill a character when he's lended from extreme heights.
 }
 
 void AMTBaseCharacter::Tick(float DeltaTime)
@@ -95,4 +108,33 @@ void AMTBaseCharacter::Look(const FInputActionValue& Value)
     {
         IsNegatePitch ? AddControllerPitchInput(LookValue.Y) : AddControllerPitchInput(LookValue.Y * -1.0);
     }
+}
+
+void AMTBaseCharacter::OnDeath()
+{
+    UE_LOG(BaseCharacterLog, Display, TEXT("Player %s is dead"), *GetName());
+
+    PlayAnimMontage(DeathAnimMontage);
+    GetCharacterMovement()->DisableMovement();
+
+    GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+    GetMesh()->SetSimulatePhysics(true);
+}
+
+void AMTBaseCharacter::OnHealthChanged(float NewHealth)
+{
+    UE_LOG(BaseCharacterLog, Display, TEXT("Player %s have %0.f health"), *GetName(), NewHealth);
+}
+
+void AMTBaseCharacter::OnGroundLanded(const FHitResult& Hit)
+{
+    const auto FallVelocityZ = -GetVelocity().Z;
+
+    if (FallVelocityZ < LandedDamageVelocity.X) return;
+
+    const auto FallDamage = FMath::GetMappedRangeValueClamped(LandedDamageVelocity, LandedDamage, FallVelocityZ);
+    TakeDamage(FallDamage, FDamageEvent{}, nullptr, nullptr);
+
+    UE_LOG(BaseCharacterLog, Display, TEXT("On landed: %f"), FallVelocityZ);
+    UE_LOG(BaseCharacterLog, Display, TEXT("Fall damage: %f"), FallDamage);
 }
