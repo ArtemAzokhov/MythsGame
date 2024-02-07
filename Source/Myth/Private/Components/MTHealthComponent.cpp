@@ -12,6 +12,7 @@ void UMTHealthComponent::BeginPlay()
     Super::BeginPlay();
 
     Health = MaxHealth;
+    OnHealthChange.Broadcast(Health);
 
     AActor* ComponentOwner = GetOwner();
     if(ComponentOwner)

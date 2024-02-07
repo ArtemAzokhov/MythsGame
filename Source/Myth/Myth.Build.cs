@@ -14,15 +14,18 @@ public class Myth : ModuleRules
             "CoreUObject", 
             "Engine", 
             "InputCore",
-            "EnhancedInput"
+            "EnhancedInput",
+            "UMG"
         });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
         PublicIncludePaths.AddRange(new string[] 
         {
+            "Myth/Public/Components",
+            "Myth/Public/Dev",
             "Myth/Public/Player",
-            "Myth/Public/Dev"
+            "Myth/Public/UI"
         });
 
         // Uncomment if you are using Slate UI
