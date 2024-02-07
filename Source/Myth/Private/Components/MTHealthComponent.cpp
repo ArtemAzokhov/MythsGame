@@ -42,9 +42,9 @@ void UMTHealthComponent::OnTakeAnyDamage(
 
 void UMTHealthComponent::HealUpdate()
 {
-    SetHealth(Health + HealPerSecond*HealUpdateTime);
+    SetHealth(Health + HealPerSecond * HealUpdateTime);
 
-    if (FMath::IsNearlyEqual(Health, MaxHealth) && GetWorld())
+    if (IsHealthFull() && GetWorld())
     {
         GetWorld()->GetTimerManager().ClearTimer(HealTimerHandle);
     }
@@ -52,7 +52,21 @@ void UMTHealthComponent::HealUpdate()
 
 void UMTHealthComponent::SetHealth(float NewHealth)
 {
-    Health = FMath::Clamp(NewHealth, 0.0f, MaxHealth);
+    const auto NextHealth = FMath::Clamp(NewHealth, 0.0f, MaxHealth);
+    Health = NextHealth;
 
     OnHealthChange.Broadcast(Health);
+}
+
+bool UMTHealthComponent::TryToAddHealth(float HealthAmount)
+{
+    if (IsDead() || IsHealthFull()) return false;
+
+    SetHealth(Health + HealthAmount);
+    return true;
+}
+
+bool UMTHealthComponent::IsHealthFull() const
+{
+    return FMath::IsNearlyEqual(Health, MaxHealth);
 }

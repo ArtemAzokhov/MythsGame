@@ -25,7 +25,8 @@ public class Myth : ModuleRules
             "Myth/Public/Components",
             "Myth/Public/Dev",
             "Myth/Public/Player",
-            "Myth/Public/UI"
+            "Myth/Public/UI",
+            "Myth/Public/Pickups"
         });
 
         // Uncomment if you are using Slate UI
