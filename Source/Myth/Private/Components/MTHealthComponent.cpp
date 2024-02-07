@@ -11,11 +11,10 @@ void UMTHealthComponent::BeginPlay()
 {
     Super::BeginPlay();
 
-    Health = MaxHealth;
-    OnHealthChange.Broadcast(Health);
+    SetHealth(MaxHealth);
 
     AActor* ComponentOwner = GetOwner();
-    if(ComponentOwner)
+    if (ComponentOwner)
     {
         ComponentOwner->OnTakeAnyDamage.AddDynamic(this, &UMTHealthComponent::OnTakeAnyDamage);
     }
@@ -24,12 +23,36 @@ void UMTHealthComponent::BeginPlay()
 void UMTHealthComponent::OnTakeAnyDamage(
     AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
 {
-    if (Damage <= 0.0f || IsDead()) return;
-    Health = FMath::Clamp(Health - Damage, 0.0f, MaxHealth);
-    OnHealthChange.Broadcast(Health);
+    if (Damage <= 0.0f || IsDead() || !GetWorld()) return;
 
-    if(IsDead())
+    SetHealth(Health - Damage);
+
+    GetWorld()->GetTimerManager().ClearTimer(HealTimerHandle);
+
+    if (IsDead())
     {
         OnDeath.Broadcast();
     }
+    else if (AutoHeal)
+    {
+        GetWorld()->GetTimerManager().SetTimer(HealTimerHandle, this, //
+            &UMTHealthComponent::HealUpdate, HealUpdateTime, true, HealDelay);
+    }
+}
+
+void UMTHealthComponent::HealUpdate()
+{
+    SetHealth(Health + HealPerSecond*HealUpdateTime);
+
+    if (FMath::IsNearlyEqual(Health, MaxHealth) && GetWorld())
+    {
+        GetWorld()->GetTimerManager().ClearTimer(HealTimerHandle);
+    }
+}
+
+void UMTHealthComponent::SetHealth(float NewHealth)
+{
+    Health = FMath::Clamp(NewHealth, 0.0f, MaxHealth);
+
+    OnHealthChange.Broadcast(Health);
 }

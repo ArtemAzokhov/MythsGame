@@ -7,9 +7,9 @@
 
 DEFINE_LOG_CATEGORY_STATIC(PlayerHUDWidgetLog, All, All);
 
-void UMTPlayerHUDWidget::NativeConstruct()
+void UMTPlayerHUDWidget::NativeOnInitialized()
 {
-    Super::NativeConstruct();
+    Super::NativeOnInitialized();
 
     const auto Player = GetOwningPlayerPawn();
     if (!Player) return;

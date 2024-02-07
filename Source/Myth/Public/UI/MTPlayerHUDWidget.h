@@ -17,7 +17,7 @@ class MYTH_API UMTPlayerHUDWidget : public UUserWidget
 public:
     void UpdateDisplayHealth(float NewHealth);
 
-    virtual void NativeConstruct() override;
+    virtual void NativeOnInitialized() override;
 
 protected:
     UPROPERTY(meta = (BindWidget))
