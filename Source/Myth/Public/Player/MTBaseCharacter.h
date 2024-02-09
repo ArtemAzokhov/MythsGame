@@ -10,6 +10,7 @@
 class USpringArmComponent;
 class UCameraComponent;
 class UMTHealthComponent;
+class UMTInventoryComponent;
 class UInputMappingContext;
 class UInputAction;
 
@@ -30,6 +31,9 @@ protected:
 
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
     UMTHealthComponent* HealthComponent;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+    UMTInventoryComponent* InventoryComponent;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enhanced Input")
     UInputMappingContext* InputMapping;
@@ -68,6 +72,7 @@ private:
 
     void OnDeath();
     void OnHealthChanged(float NewHealth);
+    void OnInventoryChanged(int32 NewCapacity, int32 PickupAmount);
 
     UFUNCTION()
     void OnGroundLanded(const FHitResult& Hit);

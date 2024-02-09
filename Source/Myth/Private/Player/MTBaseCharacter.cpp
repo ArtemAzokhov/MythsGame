@@ -4,6 +4,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/MTHealthComponent.h"
+#include "Components/MTInventoryComponent.h"
 #include "InputMappingContext.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
@@ -26,6 +27,7 @@ AMTBaseCharacter::AMTBaseCharacter()
     CameraComponent->SetupAttachment(SpringArmComponent);
 
     HealthComponent = CreateDefaultSubobject<UMTHealthComponent>("HealthComponent");
+    InventoryComponent = CreateDefaultSubobject<UMTInventoryComponent>("InventoryComponent");
 }
 
 void AMTBaseCharacter::BeginPlay()
@@ -35,6 +37,9 @@ void AMTBaseCharacter::BeginPlay()
     OnHealthChanged(HealthComponent->GetHealth()); // to set health value before the AMTBaseCharacter is constracted
     HealthComponent->OnDeath.AddUObject(this, &AMTBaseCharacter::OnDeath);
     HealthComponent->OnHealthChange.AddUObject(this, &AMTBaseCharacter::OnHealthChanged);
+
+    OnInventoryChanged(InventoryComponent->GetCapacity(), InventoryComponent->GetPickupAmount());
+    InventoryComponent->OnInventoryChange.AddUObject(this, &AMTBaseCharacter::OnInventoryChanged);
 
     LandedDelegate.AddDynamic(this, &AMTBaseCharacter::OnGroundLanded);
     LandedDamage = FVector2D(LandedDamage.X, HealthComponent->GetMaxHealth()); // to kill a character when he's lended from extreme heights.
@@ -124,6 +129,11 @@ void AMTBaseCharacter::OnDeath()
 void AMTBaseCharacter::OnHealthChanged(float NewHealth)
 {
     UE_LOG(BaseCharacterLog, Display, TEXT("Player %s have %0.f health"), *GetName(), NewHealth);
+}
+
+void AMTBaseCharacter::OnInventoryChanged(int32 NewCapacity, int32 PickupAmount)
+{
+    UE_LOG(BaseCharacterLog, Display, TEXT("Player %s have %i capacity and have %i pickups"), *GetName(), NewCapacity, PickupAmount);
 }
 
 void AMTBaseCharacter::OnGroundLanded(const FHitResult& Hit)
