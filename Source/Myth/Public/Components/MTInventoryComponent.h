@@ -21,11 +21,12 @@ public:
     int32 GetCapacity() const { return Capacity; }
     int32 GetMaxCapacity() const { return MaxCapacity; }
     int32 GetPickupAmount() const { return PickupAmount; }
-    
 
     bool TryToAddInventory(int32 TakenAmount);
     bool IsInvetoryFull() const;
     bool IsCapacityEnough(int32 InventoryAmount) const;
+
+    void DecreasePickup();
 
 protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Inventory", meta = (ClampMin = "0", ClampMax = "100"))

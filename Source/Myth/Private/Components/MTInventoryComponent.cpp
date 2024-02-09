@@ -44,3 +44,9 @@ void UMTInventoryComponent::AddPickup(int32 TakenAmount)
     PickupAmount = PickupAmount + TakenAmount;
     SetCapacity(Capacity + TakenAmount);
 }
+
+void UMTInventoryComponent::DecreasePickup()
+{
+    --PickupAmount;
+    SetCapacity(--Capacity);
+}
