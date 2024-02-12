@@ -3,9 +3,12 @@
 #include "UI/MTPlayerHUDWidget.h"
 #include "Components/MTHealthComponent.h"
 #include "Components/MTInventoryComponent.h"
+#include "Components/MTEventComponent.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
 #include "Components/HorizontalBox.h"
+#include "UI/MTQuestionWidget.h"
+#include "UI/EventInfoWidget.h"
 
 DEFINE_LOG_CATEGORY_STATIC(PlayerHUDWidgetLog, All, All);
 
@@ -15,6 +18,10 @@ void UMTPlayerHUDWidget::NativeOnInitialized()
 
     GetHealthComponent();
     GetInventoryComponent();
+    GetEventComponent();
+
+    QuestionMenu = CreateWidget<UMTQuestionWidget>(GetWorld(), QuestionWidgetClass);
+    //HideQuestionMenu();
 
     UE_LOG(PlayerHUDWidgetLog, Display, TEXT("%s  was construct"), *GetName());
 }
@@ -82,4 +89,30 @@ void UMTPlayerHUDWidget::GetInventoryComponent()
     MaxCapacityUI = InventoryComponent->GetMaxCapacity();
 
     InventoryComponent->OnInventoryChange.AddUObject(this, &UMTPlayerHUDWidget::UpdateDisplayInventory);
+}
+
+void UMTPlayerHUDWidget::GetEventComponent()
+{
+    const auto Player = GetOwningPlayerPawn();
+    if (!Player) return;
+
+    const auto Component = Player->GetComponentByClass(UMTEventComponent::StaticClass());
+    const auto EventComponent = Cast<UMTEventComponent>(Component);
+    if (!EventComponent) return;
+
+    EventComponent->OnEventStateChange.AddUObject(this, &UMTPlayerHUDWidget::ShowQuestionMenu);
+    UE_LOG(PlayerHUDWidgetLog, Display, TEXT("EventComponent complete"));
+}
+
+void UMTPlayerHUDWidget::ShowQuestionMenu(int32 EventConundDown, int32 DeliveryGoal)
+{
+    //QuestionMenu->SetMissionText(DeliveryGoal, EventConundDown);
+
+    //QuestionMenu->SetVisibility(ESlateVisibility::Visible);
+    UE_LOG(PlayerHUDWidgetLog, Display, TEXT("ShowQuestionMenu EventConundDown %i, DeliveryGoal %i"), EventConundDown, DeliveryGoal);
+}
+
+void UMTPlayerHUDWidget::HideQuestionMenu()
+{
+    QuestionMenu->SetVisibility(ESlateVisibility::Hidden);
 }

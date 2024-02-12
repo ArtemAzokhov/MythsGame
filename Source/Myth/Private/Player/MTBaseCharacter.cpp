@@ -5,10 +5,12 @@
 #include "Camera/CameraComponent.h"
 #include "Components/MTHealthComponent.h"
 #include "Components/MTInventoryComponent.h"
+#include "Components/MTEventComponent.h"
 #include "InputMappingContext.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+
 
 DEFINE_LOG_CATEGORY_STATIC(BaseCharacterLog, All, All);
 
@@ -28,6 +30,7 @@ AMTBaseCharacter::AMTBaseCharacter()
 
     HealthComponent = CreateDefaultSubobject<UMTHealthComponent>("HealthComponent");
     InventoryComponent = CreateDefaultSubobject<UMTInventoryComponent>("InventoryComponent");
+    EventComponent = CreateDefaultSubobject<UMTEventComponent>("EventComponent");
 }
 
 void AMTBaseCharacter::BeginPlay()
@@ -148,3 +151,4 @@ void AMTBaseCharacter::OnGroundLanded(const FHitResult& Hit)
     UE_LOG(BaseCharacterLog, Display, TEXT("On landed: %f"), FallVelocityZ);
     UE_LOG(BaseCharacterLog, Display, TEXT("Fall damage: %f"), FallDamage);
 }
+

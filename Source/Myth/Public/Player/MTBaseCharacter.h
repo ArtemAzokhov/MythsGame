@@ -13,6 +13,7 @@ class UMTHealthComponent;
 class UMTInventoryComponent;
 class UInputMappingContext;
 class UInputAction;
+class UMTEventComponent;
 
 UCLASS()
 class MYTH_API AMTBaseCharacter : public ACharacter
@@ -34,6 +35,9 @@ protected:
 
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
     UMTInventoryComponent* InventoryComponent;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+    UMTEventComponent* EventComponent;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enhanced Input")
     UInputMappingContext* InputMapping;
@@ -66,6 +70,7 @@ public:
 
     virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+
 private:
     void Move(const FInputActionValue& Value);
     void Look(const FInputActionValue& Value);
@@ -76,4 +81,5 @@ private:
 
     UFUNCTION()
     void OnGroundLanded(const FHitResult& Hit);
+
 };
